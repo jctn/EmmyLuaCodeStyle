@@ -17,6 +17,16 @@
 #endif
 
 
+int write_string_to_file_replace(const std::string & file_string, const std::string str )
+{
+	std::ofstream	OsWrite(file_string);
+	OsWrite<<str;
+	OsWrite<<std::endl;
+	OsWrite.close();
+   return 0;
+}
+
+
 int main(int argc, char** argv)
 {
 	CommandLine cmd;
@@ -68,7 +78,9 @@ int main(int argc, char** argv)
 	if (cmd.GetTarget() == "format")
 	{
 		auto formattedText = formatter.GetFormattedText();
-		std::cout.write(formattedText.data(), formattedText.size());
+		//格式化写入覆盖文件
+		write_string_to_file_replace(argv[2],formattedText)
+		// std::cout.write(formattedText.data(), formattedText.size());
 	}
 	else if (cmd.GetTarget() == "diagnosis")
 	{
