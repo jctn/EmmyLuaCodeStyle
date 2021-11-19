@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 	{
 		auto formattedText = formatter.GetFormattedText();
 		//格式化写入覆盖文件
-		write_string_to_file_replace(argv[2],formattedText)
+		write_string_to_file_replace(argv[2],formattedText);
 		// std::cout.write(formattedText.data(), formattedText.size());
 	}
 	else if (cmd.GetTarget() == "diagnosis")
