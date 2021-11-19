@@ -17,16 +17,6 @@
 #endif
 
 
-int write_string_to_file_replace(const std::string & file_string, const std::string str )
-{
-	std::ofstream	OsWrite(file_string);
-	OsWrite<<str;
-	OsWrite<<std::endl;
-	OsWrite.close();
-   return 0;
-}
-
-
 int main(int argc, char** argv)
 {
 	CommandLine cmd;
@@ -38,6 +28,8 @@ int main(int argc, char** argv)
 	cmd.Add<int>("stdin", "i", "Read from stdin and specify read size");
 	cmd.Add<std::string>("config", "c",
 	                     "Specify editorconfig file, it decides on the effect of formatting or diagnosis");
+	cmd.Add<std::string>("outfile", "o",
+	                     "Specify output file");
 
 	if (!cmd.Parse(argc, argv))
 	{
@@ -49,7 +41,7 @@ int main(int argc, char** argv)
 
 	if (!cmd.Get<std::string>("file").empty())
 	{
-		parser = LuaParser::LoadFromFile(argv[2]);
+		parser = LuaParser::LoadFromFile(cmd.Get<std::string>("file"));
 	}
 	else if (cmd.Get<int>("stdin") != 0)
 	{
@@ -78,9 +70,16 @@ int main(int argc, char** argv)
 	if (cmd.GetTarget() == "format")
 	{
 		auto formattedText = formatter.GetFormattedText();
-		//格式化写入覆盖文件
-		write_string_to_file_replace(argv[2],formattedText);
-		// std::cout.write(formattedText.data(), formattedText.size());
+		if (!cmd.Get<std::string>("outfile").empty())
+		{
+			std::fstream f(cmd.Get<std::string>("outfile"), std::ios::out | std::ios::binary);
+			f.write(formattedText.data(), formattedText.size());
+			f.close();
+		}
+		else
+		{
+			std::cout.write(formattedText.data(), formattedText.size());
+		}
 	}
 	else if (cmd.GetTarget() == "diagnosis")
 	{
